@@ -42,15 +42,13 @@ class AppCupit extends Cubit<AppState> {
     emit(InsertToDataBaseState());
   }
 
-  Future<taskModel> getFromDataBase() async {
-    List<Map> maps = await myDB.GetDaTaFromDataBase();
+  List<Map> getFromDataBase() {
+    List<Map> maps = myDB.GetDaTaFromDataBase();
     for (int i = 0; i < maps.length; i++) {
       print(taskModel.fromMap(maps[i]).title + '<<<<<');
     }
-    if (maps.length > 0) {
-      return taskModel.fromMap(maps.first);
-    }
-    return null;
+
+    return maps;
   }
 
   void DeleteFromDataBase() {

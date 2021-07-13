@@ -7,21 +7,20 @@ import 'package:todo_app/screens/task.dart';
 import 'package:todo_app/shared/home/states.dart';
 
 class AppCupit extends Cubit<AppState> {
-  AppCupit() : super(InitialState()) {
-    myDB.createDatabase();
-  }
+  AppCupit() : super(InitialState());
   static AppCupit get(context) => BlocProvider.of(context);
   List pages = [Task(), Done(), Archived()];
   bool addIcon = true;
   int selectedPageIndex = 0;
+  List<Map> newTasks = [];
+  List<Map> doneTasks = [];
+  List<Map> archivedTasks = [];
   taskModel model = taskModel(title: '', data: '', time: '', status: '');
   MyDatabase myDB = MyDatabase();
 
   int changeButtomNavigationBar(int index) {
     selectedPageIndex = index;
-    if (index == 0) {
-      getFromDataBase();
-    }
+
     emit(ChngeAppBar());
     return selectedPageIndex;
   }
@@ -31,24 +30,32 @@ class AppCupit extends Cubit<AppState> {
     emit(chanegeFloatingActionButtonIconState());
   }
 
+  void createDatabase() {
+    myDB.createDatabase().then((value) {
+      emit(CreateDataBaseState());
+      getFromDataBase();
+    });
+  }
+
   void InsertToDataBase() {
-    print(model.title +
-        ' ' +
-        model.data +
-        ' ' +
-        model.time +
-        '&&&&&&&&&&&&&&&&&&');
     myDB.InsertToDatabase(model);
+    //getFromDataBase();
     emit(InsertToDataBaseState());
+    getFromDataBase();
   }
 
   List<Map> getFromDataBase() {
-    List<Map> maps = myDB.GetDaTaFromDataBase();
-    for (int i = 0; i < maps.length; i++) {
-      print(taskModel.fromMap(maps[i]).title + '<<<<<');
-    }
+    emit(AppGetDatabaseLoadingState());
+    print('loading');
+    myDB.GetDaTaFromDataBase().then((value) => newTasks = value);
+    print('done');
 
-    return maps;
+    emit(AppGetDatabaseingState());
+    // for (int i = 0; i < maps.length; i++) {
+    //   print(taskModel.fromMap(maps[i]).title + '<<<<<');
+    // }
+
+    return newTasks;
   }
 
   void DeleteFromDataBase() {

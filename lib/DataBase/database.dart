@@ -54,5 +54,9 @@ class MyDatabase {
   }
 
   void UpDateDataBase() {}
-  void DeleteFromDataBase() {}
+  Future<List<Map>> DeleteFromDataBase(int id) async {
+    await db.rawDelete('DELETE FROM tasks WHERE id = ?', [id]);
+    List<Map> list = await db.rawQuery('SELECT * FROM tasks');
+    return list;
+  }
 }

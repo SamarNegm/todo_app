@@ -15,8 +15,12 @@ class Task extends StatelessWidget {
       },
       builder: (context, state) {
         var tasks = AppCupit.get(context).newTasks;
-        print(tasks.toString() + ' >>>>>>>>>>>>>>>>>>>>');
-        return TaskWidget(maps: tasks);
+
+        return state == AppGetDatabaseLoadingState()
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : TaskWidget(maps: tasks);
       },
     );
   }

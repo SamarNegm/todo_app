@@ -3,7 +3,7 @@ import 'package:todo_app/models/task_model.dart';
 
 class MyDatabase {
   Database db;
-  createDatabase() async {
+  Future<void> createDatabase() async {
     db = await openDatabase(
       'todo.db',
       version: 1,
@@ -17,6 +17,7 @@ class MyDatabase {
       },
       onOpen: (db) {
         print('database opened');
+        print('database opened^ getede');
       },
     );
   }
@@ -41,11 +42,14 @@ class MyDatabase {
     });
   }
 
-  List<Map> GetDaTaFromDataBase() {
+  Future<List<Map>> GetDaTaFromDataBase() async {
+    print('getting data');
     List<Map> list;
-    db.rawQuery('SELECT * FROM tasks').then((value) {
-      list = value;
-    });
+    var value = await db.rawQuery('SELECT * FROM tasks');
+    print('doneeeeee >>>' + value.toString());
+    list = value;
+
+    print('data ' + list.toString());
     return list;
   }
 

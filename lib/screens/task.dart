@@ -14,7 +14,8 @@ class Task extends StatelessWidget {
         // TODO: implement listener
       },
       builder: (context, state) {
-        var tasks = AppCupit.get(context).getFromDataBase();
+        var tasks = AppCupit.get(context).newTasks;
+        print(tasks.toString() + ' >>>>>>>>>>>>>>>>>>>>');
         return TaskWidget(maps: tasks);
       },
     );

@@ -59,12 +59,11 @@ class AppCupit extends Cubit<AppState> {
   }
 
   Future<void> DeleteFromDataBase(int id) async {
-    print('AppGetDatabaseLoadingState>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<');
     newTasks = await myDB.DeleteFromDataBase(id);
     emit(DeleteDataBaseState());
   }
 
-  void UpdateDataBase() {
+  void UpdateDataBase({String state, int id}) {
     myDB.InsertToDatabase(model);
     emit(InsertToDataBaseState());
   }

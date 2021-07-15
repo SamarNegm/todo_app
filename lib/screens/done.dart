@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/shared/home/cubit.dart';
+import 'package:todo_app/shared/home/states.dart';
+import 'package:todo_app/widgets/taskWidget.dart';
 
 class Done extends StatelessWidget {
   const Done({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('done'),
-      ),
+    return BlocConsumer<AppCupit, AppState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        var tasks = AppCupit.get(context).doneTasks;
+        print(tasks.toString() + 'ok');
+
+        return state == AppGetDatabaseLoadingState()
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : TaskWidget(maps: tasks);
+      },
     );
   }
 }

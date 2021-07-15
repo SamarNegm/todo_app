@@ -26,7 +26,7 @@ class MyDatabase {
     db.transaction((txn) {
       txn
           .rawInsert(
-              'INSERT INTO tasks(title,date,time,status) VALUES ("${model.title}","${model.data}","${model.time}","done")')
+              'INSERT INTO tasks(title,date,time,status) VALUES ("${model.title}","${model.data}","${model.time}","${model.status}")')
           .then((value) {
         print('inserted ' +
             value.toString() +
@@ -35,25 +35,32 @@ class MyDatabase {
             ' ' +
             model.data +
             ' ' +
-            model.time);
+            model.time +
+            '  ' +
+            model.status);
       }).catchError((error) {
         print(error.toString());
       });
     });
   }
 
-  Future<List<Map>> GetDaTaFromDataBase() async {
-    print('getting data');
+  Future<List<Map>> GetDaTaFromDataBase(String state) async {
+    print('getting data>>' + state);
     List<Map> list;
-    var value = await db.rawQuery('SELECT * FROM tasks');
-    print('doneeeeee >>>' + value.toString());
+    var value =
+        await db.rawQuery('SELECT * FROM tasks WHERE status =? ', [state]);
+    print('doneeeeee 1>>>' + value.toString());
+
     list = value;
 
     print('data ' + list.toString());
     return list;
   }
 
-  void UpDateDataBase() {}
+  Future<void> UpDateDataBase({String state, int id}) async {
+    await db.rawUpdate('UPDATE tasks SET status = ? WHERE id = ?', [state, id]);
+  }
+
   Future<List<Map>> DeleteFromDataBase(int id) async {
     await db.rawDelete('DELETE FROM tasks WHERE id = ?', [id]);
     List<Map> list = await db.rawQuery('SELECT * FROM tasks');

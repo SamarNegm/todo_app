@@ -115,7 +115,7 @@ class Home extends StatelessWidget {
                                       title: titleController.text,
                                       data: dateController.text,
                                       time: timeController.text,
-                                      status: 'Done');
+                                      status: 'no');
                                   cubit.insertToDataBase();
                                 },
                                 child: Text('Save'))

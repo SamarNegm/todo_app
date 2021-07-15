@@ -20,6 +20,10 @@ class AppCupit extends Cubit<AppState> {
 
   int changeButtomNavigationBar(int index) {
     selectedPageIndex = index;
+    print(index);
+    if (index == 0) getFromDataBase('no');
+    if (index == 1) getFromDataBase('done');
+    if (index == 2) getFromDataBase('archive');
 
     emit(ChngeAppBar());
     return selectedPageIndex;
@@ -33,7 +37,8 @@ class AppCupit extends Cubit<AppState> {
   void createDatabase() {
     myDB.createDatabase().then((value) {
       emit(CreateDataBaseState());
-      getFromDataBase();
+      print('nooo');
+      getFromDataBase('no');
     });
   }
 
@@ -41,13 +46,19 @@ class AppCupit extends Cubit<AppState> {
     myDB.InsertToDatabase(model);
     //getFromDataBase();
     emit(InsertToDataBaseState());
-    getFromDataBase();
+    getFromDataBase(model.status);
   }
 
-  List<Map> getFromDataBase() {
+  List<Map> getFromDataBase(String state) {
     emit(AppGetDatabaseLoadingState());
-    print('loading');
-    myDB.GetDaTaFromDataBase().then((value) => newTasks = value);
+    print('loading>>' + state);
+    myDB.GetDaTaFromDataBase(state).then((value) {
+      if (state == 'no')
+        newTasks = value;
+      else if (state == 'done')
+        doneTasks = value;
+      else if (state == 'archive') archivedTasks = value;
+    });
     print('done');
 
     emit(AppGetDatabaseingState());
@@ -64,7 +75,7 @@ class AppCupit extends Cubit<AppState> {
   }
 
   void UpdateDataBase({String state, int id}) {
-    myDB.InsertToDatabase(model);
-    emit(InsertToDataBaseState());
+    myDB.UpDateDataBase(state: state, id: id);
+    emit(UpdateDataBaseState());
   }
 }

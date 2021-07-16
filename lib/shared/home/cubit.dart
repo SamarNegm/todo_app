@@ -21,9 +21,7 @@ class AppCupit extends Cubit<AppState> {
   int changeButtomNavigationBar(int index) {
     selectedPageIndex = index;
     print(index);
-    if (index == 0) getFromDataBase('no');
-    if (index == 1) getFromDataBase('done');
-    if (index == 2) getFromDataBase('archive');
+    getFromDataBase();
 
     emit(ChngeAppBar());
     return selectedPageIndex;
@@ -36,9 +34,9 @@ class AppCupit extends Cubit<AppState> {
 
   void createDatabase() {
     myDB.createDatabase().then((value) {
+      getFromDataBase();
       emit(CreateDataBaseState());
       print('nooo');
-      getFromDataBase('no');
     });
   }
 
@@ -46,36 +44,38 @@ class AppCupit extends Cubit<AppState> {
     myDB.InsertToDatabase(model);
     //getFromDataBase();
     emit(InsertToDataBaseState());
-    getFromDataBase(model.status);
+    getFromDataBase();
   }
 
-  List<Map> getFromDataBase(String state) {
+  Future<List<Map>> getFromDataBase() async {
     emit(AppGetDatabaseLoadingState());
-    print('loading>>' + state);
-    myDB.GetDaTaFromDataBase(state).then((value) {
-      if (state == 'no')
-        newTasks = value;
-      else if (state == 'done')
-        doneTasks = value;
-      else if (state == 'archive') archivedTasks = value;
+    await myDB.GetDaTaFromDataBase('no').then((value) {
+      newTasks = value;
+    }).catchError((Error) {
+      print(Error);
     });
-    print('done');
-
+    await myDB.GetDaTaFromDataBase('done').then((value) {
+      doneTasks = value;
+    });
+    await myDB.GetDaTaFromDataBase('archive').then((value) {
+      archivedTasks = value;
+    });
     emit(AppGetDatabaseingState());
-    // for (int i = 0; i < maps.length; i++) {
-    //   print(taskModel.fromMap(maps[i]).title + '<<<<<');
-    // }
 
     return newTasks;
   }
 
   Future<void> DeleteFromDataBase(int id) async {
-    newTasks = await myDB.DeleteFromDataBase(id);
+    await myDB.DeleteFromDataBase(id);
+    emit(AppGetDatabaseLoadingState());
+    getFromDataBase();
     emit(DeleteDataBaseState());
   }
 
-  void UpdateDataBase({String state, int id}) {
-    myDB.UpDateDataBase(state: state, id: id);
+  Future<void> updateDataBase({String state, int id}) async {
+    print(state);
+    await myDB.UpDateDataBase(state: state, id: id);
+    getFromDataBase();
     emit(UpdateDataBaseState());
   }
 }

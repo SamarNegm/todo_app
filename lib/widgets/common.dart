@@ -81,7 +81,7 @@ Widget defaultFormField({
     );
 
 Widget buildTaskItem(Map model, context) => Dismissible(
-      key: Key(model['id'].toString()),
+      key: UniqueKey(),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -122,7 +122,7 @@ Widget buildTaskItem(Map model, context) => Dismissible(
               ),
               IconButton(
                 onPressed: () {
-                  AppCupit.get(context).UpdateDataBase(
+                  AppCupit.get(context).updateDataBase(
                     state: 'done',
                     id: model['id'],
                   );
@@ -134,7 +134,7 @@ Widget buildTaskItem(Map model, context) => Dismissible(
               ),
               IconButton(
                 onPressed: () {
-                  AppCupit.get(context).UpdateDataBase(
+                  AppCupit.get(context).updateDataBase(
                     state: 'archive',
                     id: model['id'],
                   );

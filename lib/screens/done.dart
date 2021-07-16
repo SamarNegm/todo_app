@@ -15,8 +15,6 @@ class Done extends StatelessWidget {
       },
       builder: (context, state) {
         var tasks = AppCupit.get(context).doneTasks;
-        print(tasks.toString() + 'ok');
-
         return state == AppGetDatabaseLoadingState()
             ? Center(
                 child: CircularProgressIndicator(),

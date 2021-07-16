@@ -8,7 +8,6 @@ class MyDatabase {
       'todo.db',
       version: 1,
       onCreate: (db, version) {
-        print('database created');
         db
             .execute(
                 'CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT,date TEXT,time TEXT, status TEXT)')
@@ -17,7 +16,6 @@ class MyDatabase {
       },
       onOpen: (db) {
         print('database opened');
-        print('database opened^ getede');
       },
     );
   }
@@ -27,38 +25,29 @@ class MyDatabase {
       txn
           .rawInsert(
               'INSERT INTO tasks(title,date,time,status) VALUES ("${model.title}","${model.data}","${model.time}","${model.status}")')
-          .then((value) {
-        print('inserted ' +
-            value.toString() +
-            '  ' +
-            model.title +
-            ' ' +
-            model.data +
-            ' ' +
-            model.time +
-            '  ' +
-            model.status);
-      }).catchError((error) {
+          .then((value) {})
+          .catchError((error) {
         print(error.toString());
       });
     });
   }
 
   Future<List<Map>> GetDaTaFromDataBase(String state) async {
-    print('getting data>>' + state);
-    List<Map> list;
-    var value =
+    List<Map> list =
         await db.rawQuery('SELECT * FROM tasks WHERE status =? ', [state]);
-    print('doneeeeee 1>>>' + value.toString());
 
-    list = value;
-
-    print('data ' + list.toString());
     return list;
   }
 
   Future<void> UpDateDataBase({String state, int id}) async {
-    await db.rawUpdate('UPDATE tasks SET status = ? WHERE id = ?', [state, id]);
+    db.transaction((txn) {
+      txn
+          .rawUpdate('UPDATE tasks SET status = ? WHERE id = ?', [state, id])
+          .then((value) {})
+          .catchError((error) {
+            print(error.toString());
+          });
+    });
   }
 
   Future<List<Map>> DeleteFromDataBase(int id) async {
